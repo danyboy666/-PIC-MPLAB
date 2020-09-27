@@ -1,0 +1,478 @@
+CCS PCM C Compiler, Version 4.062, 41466               18-févr.-11 09:46
+
+               Filename: \\TgeSrv1\Élèves_Dossiers\echaa013\Bureau\244Lab4\partie1.lst
+
+               ROM used: 312 words (4%)
+                         Largest free fragment is 2048
+               RAM used: 11 (3%) at main() level
+                         12 (3%) worst case
+               Stack:    2 locations
+
+*
+0000:  MOVLW  00
+0001:  MOVWF  0A
+0002:  GOTO   054
+0003:  NOP
+.................... ///////////////////////////////////////////////////////////////////////////// 
+.................... //                                                                         // 
+.................... //                             244Lab04                                    // 
+.................... // Laboratoire de pratique faisant clignoter six LED actives sur niveau    // 
+.................... // sur niveau haut en alternance avec microcontrôleur PIC16F877.           // 
+.................... // Connecté sur les bornes de sorties RB0 à RB5                            // 
+.................... //                                                                         // 
+.................... //                                                                         // 
+.................... ///////////////////////////////////////////////////////////////////////////// 
+.................... //                                                                         //  
+.................... // Rédigé Par: Dany et Amélie                                              // 
+.................... // Groupe: 2471                                                            // 
+.................... //                                                                         // 
+.................... ///////////////////////////////////////////////////////////////////////////// 
+....................  
+....................  
+.................... #include "\\TgeSrv1\Élèves_Dossiers\echaa013\Bureau\244Lab4\partie1.h" 
+.................... #include <16F877.h> 
+.................... //////// Standard Header file for the PIC16F877 device //////////////// 
+.................... #device PIC16F877 
+.................... #list 
+....................  
+.................... #device adc=8 
+....................  
+.................... #FUSES NOWDT                    //No Watch Dog Timer 
+.................... #FUSES XT                       //Crystal osc <= 4mhz 
+.................... #FUSES NOPUT                    //No Power Up Timer 
+.................... #FUSES NOPROTECT                //Code not protected from reading 
+.................... #FUSES BROWNOUT                 //Reset when brownout detected 
+.................... #FUSES NOLVP                    //Low Voltage Programming on B3(PIC16) or B5(PIC18) 
+.................... #FUSES NOCPD                    //No EE protection 
+.................... #FUSES NOWRT                    //Program memory not write protected 
+.................... #FUSES NODEBUG                  //No Debug mode for ICD 
+....................  
+.................... #use delay(clock=4000000) 
+0004:  MOVLW  25
+0005:  MOVWF  04
+0006:  BCF    03.7
+0007:  MOVF   00,W
+0008:  BTFSC  03.2
+0009:  GOTO   018
+000A:  MOVLW  01
+000B:  MOVWF  78
+000C:  CLRF   77
+000D:  DECFSZ 77,F
+000E:  GOTO   00D
+000F:  DECFSZ 78,F
+0010:  GOTO   00C
+0011:  MOVLW  4A
+0012:  MOVWF  77
+0013:  DECFSZ 77,F
+0014:  GOTO   013
+0015:  GOTO   016
+0016:  DECFSZ 00,F
+0017:  GOTO   00A
+0018:  RETLW  00
+.................... #use rs232(baud=9600,parity=N,xmit=PIN_C6,rcv=PIN_C7,bits=8) 
+....................  
+....................  
+....................  
+....................     
+....................    #define bpieton PIN_A0 
+....................    #define rouge_P PIN_C1 
+....................    
+....................     
+....................    int1 appui; 
+....................    int k; 
+....................    Int i; 
+....................    Int1 interdit=0; 
+*
+0065:  BCF    03.5
+0066:  BCF    20.1
+....................     
+.................... void feupieton (); 
+....................  
+....................  
+.................... void main() 
+.................... { 
+*
+0054:  CLRF   04
+0055:  BCF    03.7
+0056:  MOVLW  1F
+0057:  ANDWF  03,F
+0058:  MOVLW  19
+0059:  BSF    03.5
+005A:  MOVWF  19
+005B:  MOVLW  A6
+005C:  MOVWF  18
+005D:  MOVLW  90
+005E:  BCF    03.5
+005F:  MOVWF  18
+0060:  BSF    03.5
+0061:  BSF    1F.0
+0062:  BSF    1F.1
+0063:  BSF    1F.2
+0064:  BCF    1F.3
+....................    setup_adc_ports(NO_ANALOGS); 
+*
+0069:  BSF    03.5
+006A:  BSF    1F.0
+006B:  BSF    1F.1
+006C:  BSF    1F.2
+006D:  BCF    1F.3
+....................    setup_adc(ADC_OFF); 
+006E:  BCF    03.5
+006F:  BCF    1F.0
+....................    setup_psp(PSP_DISABLED); 
+0070:  BSF    03.5
+0071:  BCF    09.4
+....................    setup_spi(SPI_SS_DISABLED); 
+*
+0067:  MOVLW  FF
+0068:  MOVWF  23
+*
+0072:  BCF    03.5
+0073:  BCF    14.5
+0074:  BCF    23.5
+0075:  MOVF   23,W
+0076:  BSF    03.5
+0077:  MOVWF  07
+0078:  BCF    03.5
+0079:  BSF    23.4
+007A:  MOVF   23,W
+007B:  BSF    03.5
+007C:  MOVWF  07
+007D:  BCF    03.5
+007E:  BCF    23.3
+007F:  MOVF   23,W
+0080:  BSF    03.5
+0081:  MOVWF  07
+0082:  MOVLW  01
+0083:  BCF    03.5
+0084:  MOVWF  14
+0085:  MOVLW  00
+0086:  BSF    03.5
+0087:  MOVWF  14
+....................    setup_timer_0(RTCC_INTERNAL|RTCC_DIV_1); 
+0088:  MOVF   01,W
+0089:  ANDLW  C7
+008A:  IORLW  08
+008B:  MOVWF  01
+....................    setup_timer_1(T1_DISABLED); 
+008C:  BCF    03.5
+008D:  CLRF   10
+....................    setup_timer_2(T2_DISABLED,0,1); 
+008E:  MOVLW  00
+008F:  MOVWF  78
+0090:  MOVWF  12
+0091:  MOVLW  00
+0092:  BSF    03.5
+0093:  MOVWF  12
+....................  
+....................    appui=FALSE; 
+0094:  BCF    03.5
+0095:  BCF    20.0
+....................  
+....................    output_b(0); 
+0096:  BSF    03.5
+0097:  CLRF   06
+0098:  BCF    03.5
+0099:  CLRF   06
+....................  
+.................... DO { 
+....................        
+....................      output_b(0b00001001);     
+009A:  BSF    03.5
+009B:  CLRF   06
+009C:  MOVLW  09
+009D:  BCF    03.5
+009E:  MOVWF  06
+....................        
+....................       k=1; 
+009F:  MOVLW  01
+00A0:  MOVWF  21
+....................        
+....................       While(k<10){ 
+00A1:  MOVF   21,W
+00A2:  SUBLW  09
+00A3:  BTFSS  03.0
+00A4:  GOTO   0C0
+....................             delay_ms(300); 
+00A5:  MOVLW  02
+00A6:  MOVWF  24
+00A7:  MOVLW  96
+00A8:  MOVWF  25
+00A9:  CALL   004
+00AA:  DECFSZ 24,F
+00AB:  GOTO   0A7
+....................             k=k+1; 
+00AC:  MOVLW  01
+00AD:  ADDWF  21,F
+....................          if(input(bpieton)==0)appui=true; 
+00AE:  BSF    03.5
+00AF:  BSF    05.0
+00B0:  BCF    03.5
+00B1:  BTFSS  05.0
+00B2:  BSF    20.0
+....................           
+....................          interdit=~interdit; 
+00B3:  MOVLW  02
+00B4:  XORWF  20,F
+....................          output_bit(rouge_P,interdit) ; 
+00B5:  BTFSC  20.1
+00B6:  GOTO   0B9
+00B7:  BCF    07.1
+00B8:  GOTO   0BA
+00B9:  BSF    07.1
+00BA:  BCF    23.1
+00BB:  MOVF   23,W
+00BC:  BSF    03.5
+00BD:  MOVWF  07
+....................       }; 
+00BE:  BCF    03.5
+00BF:  GOTO   0A1
+....................              
+....................       output_b(0b00001010); 
+00C0:  BSF    03.5
+00C1:  CLRF   06
+00C2:  MOVLW  0A
+00C3:  BCF    03.5
+00C4:  MOVWF  06
+....................        
+....................       k=1; 
+00C5:  MOVLW  01
+00C6:  MOVWF  21
+....................        
+....................       While(k<10){ 
+00C7:  MOVF   21,W
+00C8:  SUBLW  09
+00C9:  BTFSS  03.0
+00CA:  GOTO   0E6
+....................             delay_ms(300); 
+00CB:  MOVLW  02
+00CC:  MOVWF  24
+00CD:  MOVLW  96
+00CE:  MOVWF  25
+00CF:  CALL   004
+00D0:  DECFSZ 24,F
+00D1:  GOTO   0CD
+....................             k=k+1; 
+00D2:  MOVLW  01
+00D3:  ADDWF  21,F
+....................          if(input(bpieton)==0)appui=true; 
+00D4:  BSF    03.5
+00D5:  BSF    05.0
+00D6:  BCF    03.5
+00D7:  BTFSS  05.0
+00D8:  BSF    20.0
+....................           
+....................          interdit=~interdit; 
+00D9:  MOVLW  02
+00DA:  XORWF  20,F
+....................          output_bit(rouge_P,interdit) ; 
+00DB:  BTFSC  20.1
+00DC:  GOTO   0DF
+00DD:  BCF    07.1
+00DE:  GOTO   0E0
+00DF:  BSF    07.1
+00E0:  BCF    23.1
+00E1:  MOVF   23,W
+00E2:  BSF    03.5
+00E3:  MOVWF  07
+....................       }; 
+00E4:  BCF    03.5
+00E5:  GOTO   0C7
+....................        
+....................       if(appui==true)feupieton(); 
+00E6:  BTFSC  20.0
+00E7:  CALL   019
+....................           
+....................       output_b(0b00100100); 
+00E8:  BSF    03.5
+00E9:  CLRF   06
+00EA:  MOVLW  24
+00EB:  BCF    03.5
+00EC:  MOVWF  06
+....................        
+....................       k=1; 
+00ED:  MOVLW  01
+00EE:  MOVWF  21
+....................        
+....................       While(k<10){ 
+00EF:  MOVF   21,W
+00F0:  SUBLW  09
+00F1:  BTFSS  03.0
+00F2:  GOTO   10E
+....................             delay_ms(300); 
+00F3:  MOVLW  02
+00F4:  MOVWF  24
+00F5:  MOVLW  96
+00F6:  MOVWF  25
+00F7:  CALL   004
+00F8:  DECFSZ 24,F
+00F9:  GOTO   0F5
+....................             k=k+1; 
+00FA:  MOVLW  01
+00FB:  ADDWF  21,F
+....................          if(input(bpieton)==0)appui=true; 
+00FC:  BSF    03.5
+00FD:  BSF    05.0
+00FE:  BCF    03.5
+00FF:  BTFSS  05.0
+0100:  BSF    20.0
+....................           
+....................          interdit=~interdit; 
+0101:  MOVLW  02
+0102:  XORWF  20,F
+....................          output_bit(rouge_P,interdit) ; 
+0103:  BTFSC  20.1
+0104:  GOTO   107
+0105:  BCF    07.1
+0106:  GOTO   108
+0107:  BSF    07.1
+0108:  BCF    23.1
+0109:  MOVF   23,W
+010A:  BSF    03.5
+010B:  MOVWF  07
+....................           
+....................       }; 
+010C:  BCF    03.5
+010D:  GOTO   0EF
+....................         
+....................          output_b(0b00010100); 
+010E:  BSF    03.5
+010F:  CLRF   06
+0110:  MOVLW  14
+0111:  BCF    03.5
+0112:  MOVWF  06
+....................           
+....................          k=1; 
+0113:  MOVLW  01
+0114:  MOVWF  21
+....................        
+....................       While(k<10){ 
+0115:  MOVF   21,W
+0116:  SUBLW  09
+0117:  BTFSS  03.0
+0118:  GOTO   134
+....................             delay_ms(300); 
+0119:  MOVLW  02
+011A:  MOVWF  24
+011B:  MOVLW  96
+011C:  MOVWF  25
+011D:  CALL   004
+011E:  DECFSZ 24,F
+011F:  GOTO   11B
+....................             k=k+1; 
+0120:  MOVLW  01
+0121:  ADDWF  21,F
+....................          if(input(bpieton)==0)appui=true; 
+0122:  BSF    03.5
+0123:  BSF    05.0
+0124:  BCF    03.5
+0125:  BTFSS  05.0
+0126:  BSF    20.0
+....................           
+....................          interdit=~interdit; 
+0127:  MOVLW  02
+0128:  XORWF  20,F
+....................          output_bit(rouge_P,interdit) ; 
+0129:  BTFSC  20.1
+012A:  GOTO   12D
+012B:  BCF    07.1
+012C:  GOTO   12E
+012D:  BSF    07.1
+012E:  BCF    23.1
+012F:  MOVF   23,W
+0130:  BSF    03.5
+0131:  MOVWF  07
+....................       }; 
+0132:  BCF    03.5
+0133:  GOTO   115
+....................        
+....................      if (appui==true)feupieton(); 
+0134:  BTFSC  20.0
+0135:  CALL   019
+....................    }   
+....................      
+.................... While (TRUE); 
+.................... } 
+0136:  GOTO   09A
+....................  
+.................... void feupieton (){ 
+....................  
+0137:  SLEEP
+....................       output_c(0b00000000); 
+*
+0019:  MOVLW  00
+001A:  MOVWF  23
+001B:  BSF    03.5
+001C:  CLRF   07
+001D:  BCF    03.5
+001E:  CLRF   07
+....................       output_b(0b00000000); 
+001F:  BSF    03.5
+0020:  CLRF   06
+0021:  BCF    03.5
+0022:  CLRF   06
+....................       delay_ms(500); 
+0023:  MOVLW  02
+0024:  MOVWF  24
+0025:  MOVLW  FA
+0026:  MOVWF  25
+0027:  CALL   004
+0028:  DECFSZ 24,F
+0029:  GOTO   025
+....................       output_b(0b00001100); 
+002A:  BSF    03.5
+002B:  CLRF   06
+002C:  MOVLW  0C
+002D:  BCF    03.5
+002E:  MOVWF  06
+....................   For (i=1;i<=5;++i){ 
+002F:  MOVLW  01
+0030:  MOVWF  22
+0031:  MOVF   22,W
+0032:  SUBLW  05
+0033:  BTFSS  03.0
+0034:  GOTO   052
+....................       output_c(0b00000001); 
+0035:  MOVLW  00
+0036:  MOVWF  23
+0037:  BSF    03.5
+0038:  CLRF   07
+0039:  MOVLW  01
+003A:  BCF    03.5
+003B:  MOVWF  07
+....................       delay_ms(1000); 
+003C:  MOVLW  04
+003D:  MOVWF  24
+003E:  MOVLW  FA
+003F:  MOVWF  25
+0040:  CALL   004
+0041:  DECFSZ 24,F
+0042:  GOTO   03E
+....................       output_c(0b00000000); 
+0043:  MOVLW  00
+0044:  MOVWF  23
+0045:  BSF    03.5
+0046:  CLRF   07
+0047:  BCF    03.5
+0048:  CLRF   07
+....................       delay_ms(500); 
+0049:  MOVLW  02
+004A:  MOVWF  24
+004B:  MOVLW  FA
+004C:  MOVWF  25
+004D:  CALL   004
+004E:  DECFSZ 24,F
+004F:  GOTO   04B
+....................     
+....................   } 
+0050:  INCF   22,F
+0051:  GOTO   031
+....................   
+....................    appui = false; 
+0052:  BCF    20.0
+....................   
+.................... } 
+0053:  RETLW  00
+
+Configuration Fuses:
+   Word  1: 3F79   XT NOWDT NOPUT NOPROTECT BROWNOUT NOLVP NOCPD NOWRT NODEBUG
