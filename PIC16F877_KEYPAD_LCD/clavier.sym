@@ -1,0 +1,182 @@
+004     @WRITE_PROGRAM_MEMORY8.P1
+004-005 @READ_PROGRAM_MEMORY8.P2
+008     lcd
+008     PSP_DATA
+015-016 CCP_1
+015     CCP_1_LOW
+016     CCP_1_HIGH
+01B     CCP_2_LOW
+01B-01C CCP_2
+01C     CCP_2_HIGH
+020-021 code_public
+022-023 code_admin
+024-025 code_validation
+026-027 input_read
+028-029 temp_passw
+02A     try_msg
+02B     x1
+02C     y1
+02D     x2
+02E     y2
+02F.0   alarm
+030     @TRIS_C
+031     code_gestion.response
+031     read_from_EEPROM.adr
+031     unlock.buzz_led_loop
+031     wrong_code.pulsar2
+031     intrusion.pulsar1
+031     lcd_init.i
+031     MAIN.@SCRATCH1
+032-033 code_gestion.temp_code
+032     unlock.door_opening
+032     read_from_EEPROM.i
+032     lcd_init.@SCRATCH1
+032     intrusion.@SCRATCH1
+032     wrong_code.@SCRATCH1
+033     read_from_EEPROM.val1
+033     @PRINTF_U_75.P1
+033     unlock.door_closing
+034     @PRINTF_U_75.P1
+034     read_from_EEPROM.val2
+034     read_combination.x1
+034     write_to_EEPROM.adr
+034     unlock.@SCRATCH1
+034     code_gestion.@SCRATCH1
+035-036 write_to_EEPROM.code
+035     read_combination.y1
+035     read_from_EEPROM.val3
+035     @DIV88.P1
+036     @DIV88.P1
+036     read_combination.x2
+036     read_from_EEPROM.val4
+037     write_to_EEPROM.j
+037     read_combination.y2
+037     read_from_EEPROM.val_temp
+037     @DIV88.@SCRATCH1
+038-03F write_to_EEPROM.tableau
+038     read_combination.count_input
+038     read_from_EEPROM.@SCRATCH1
+039-03A read_combination.val1
+039     read_from_EEPROM.@SCRATCH2
+03A     read_from_EEPROM.@SCRATCH3
+03B-03C read_combination.val2
+03B     read_from_EEPROM.@SCRATCH4
+03C     @MUL88.P1
+03C     read_from_EEPROM.@SCRATCH5
+03D     @MUL88.P1
+03D-03E read_combination.val3
+03D     read_from_EEPROM.@SCRATCH6
+03F-040 read_combination.val4
+040     write_to_EEPROM.@SCRATCH1
+041-042 read_combination.touche
+041     write_to_EEPROM.@SCRATCH2
+042-043 @DIV1616.P1
+042     write_to_EEPROM.@SCRATCH3
+043-044 kp_read.temp
+043     read_combination.@SCRATCH1
+044     lcd_putc.c
+044-045 @DIV1616.P1
+044     read_combination.@SCRATCH2
+045     @delay_ms1.P1
+045     lcd_gotoxy.x
+045     kp_read.@SCRATCH1
+045     read_combination.@SCRATCH3
+046     lcd_gotoxy.y
+046     @DIV1616.@SCRATCH1
+046     kp_read.@SCRATCH2
+046     read_combination.@SCRATCH4
+047-048 @MUL1616.P1
+047     lcd_gotoxy.address
+047     kp_read.@SCRATCH3
+047     read_combination.@SCRATCH5
+048     lcd_gotoxy.@SCRATCH1
+048     kp_read.@SCRATCH4
+048     read_combination.@SCRATCH6
+049     lcd_send_byte.address
+049-04A @MUL1616.P1
+04A     lcd_send_byte.n
+04B     lcd_read_byte.low
+04B     lcd_send_byte.@SCRATCH1
+04B     @MUL1616.@SCRATCH1
+04C     lcd_send_nibble.n
+04C     lcd_read_byte.high
+04D     lcd_read_byte.@SCRATCH1
+077     @SCRATCH
+078     @SCRATCH
+078     _RETURN_
+079     @SCRATCH
+07A     @SCRATCH
+07B     @SCRATCH
+10D-10E @WRITE_PROGRAM_MEMORY8.P1
+10D-10E @READ_PROGRAM_MEMORY8.P2
+
+ROM Allocation:
+00BD  @delay_ms1
+0004  LCD_INIT_STRING
+00DF  lcd_read_byte
+00D2  lcd_send_nibble
+00DE  lcd_send_byte
+0118  lcd_init
+01CC  lcd_gotoxy
+01DE  lcd_putc
+01C7  clr_display
+0339  cursor_off
+02C4  cursor_blink_on
+017E  read_from_EEPROM
+0144  @MUL1616
+0159  @MUL88
+0363  write_to_EEPROM
+033E  @DIV1616
+05AF  MAIN
+043D  unlock
+000C  @const137
+0203  kp_read
+055F  intrusion
+001E  @const141
+0029  @const142
+02A7  read_combination
+003C  @const149
+004D  @const150
+04D2  wrong_code
+0053  @const152
+0062  @const153
+04BD  @DIV88
+051E  @PRINTF_U_75
+03C4  code_gestion
+0072  @const162
+0083  @const163
+0098  @const164
+00AD  @const165
+05AF  @cinit
+
+Project Directory:
+    \\TgeSrv1\Élèves_Dossiers\echaa013\Bureau\lab2\
+
+Project Files:
+    clavier.c
+    clavier.h
+    C:\Program Files\PICC\devices\16F877.h
+    C:\Program Files\PICC\drivers\lcd.c
+    lcd_db666.h
+
+Units:
+    \\TgeSrv1\Élèves_Dossiers\echaa013\Bureau\lab2\clavier.c (main)
+
+Compiler Settings:
+    Processor:      PIC16F877
+    Pointer Size:   16
+    ADC Range:      0-255
+    Opt Level:      9
+    Short,Int,Long: UNSIGNED: 1,8,16
+    Float,Double:   32,32
+
+Output Files:
+    Errors:      clavier.err
+    Ext Symbols: clavier.esym
+    INHX8:       clavier.hex
+    Symbols:     clavier.sym
+    List:        clavier.lst
+    Debug/COFF:  clavier.cof
+    Project:     clavier.PJT
+    Call Tree:   clavier.tre
+    Statistics:  clavier.sta

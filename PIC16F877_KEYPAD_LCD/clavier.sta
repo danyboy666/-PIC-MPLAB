@@ -1,0 +1,83 @@
+
+ROM used: 1549 (19%)
+          1549 (19%) including unused fragments
+
+          1 Average locations per line
+          6 Average locations per statement
+
+RAM used: 24 (7%) at main() level
+          52 (14%) worst case
+
+Stack used: 6 worst case (out of 8 total available)
+
+Lines Stmts  %   Files
+----- ----- ---  -----
+  370   170  71  clavier.c
+   17     0   0  clavier.h
+  285     0   0  C:\Program Files\PICC\devices\16F877.h
+  180    63  26  C:\Program Files\PICC\drivers\lcd.c
+  185     7   3  lcd_db666.h
+----- -----
+ 1037   240 Total
+
+Page ROM  %  RAM   Vol Diff  Functions:
+---- --- --- ---   --- ----  ----------
+0     21   1   1             @delay_ms1
+0      8   1   0             @const55
+ Inline        3   463  4.3  lcd_read_byte
+0     12   1   1   134  2.2  lcd_send_nibble
+0     58   4   3   317  4.3  lcd_send_byte
+0     44   3   2   422  4.7  lcd_init
+0     18   1   4   186  5.5  lcd_gotoxy
+0     37   2   1   272  4.1  lcd_putc
+0      5   0   0    30  1.3  clr_display
+0      5   0   0    30  1.3  cursor_off
+ Inline        0    30  1.3  cursor_blink_on
+0     73   5  13   452  5.5  read_from_EEPROM
+0     21   1   5             @MUL1616
+0     37   2   2             @MUL88
+0     97   6  15   428  6.0  write_to_EEPROM
+0     37   2   5             @DIV1616
+0     94   6   1   519  5.2  MAIN
+0    128   8   4   951  4.8  unlock
+0     18   1   0             @const137
+0    164  11   6   906  6.3  kp_read
+0     80   5   2   401  3.7  intrusion
+0     11   1   0             @const141
+0     19   1   0             @const142
+0    146   9  21   775  5.5  read_combination
+0     17   1   0             @const149
+0      6   0   0             @const150
+0    141   9   2   516  4.2  wrong_code
+0     15   1   0             @const152
+0     16   1   0             @const153
+0     21   1   3             @DIV88
+ Inline        2             @PRINTF_U_75
+0    121   8   4   681  3.3  code_gestion
+0     17   1   0             @const162
+0     21   1   0             @const163
+0     21   1   0             @const164
+0     16   1   0             @const165
+
+Program metrics:
+    Functions               18
+    Statements              240
+    Comments                393
+    Volume (V)              12699
+    Difficilty (D)          72.5
+    Effort to implement (E) 920756
+    Time to implement (T)   14 hours, 13 minutes
+    Est Delivered Bugs (B)  3
+    Cyclomatic Complexity   36
+    Maintainability (MI)    135
+
+ Segment     Used  Free
+-----------  ----  ----
+00000-00003     4  0  
+00004-007FF  1545  499  
+00800-00FFF     0  2048  
+01000-017FF     0  2048  
+01800-01FFF     0  2048  
+
+
+

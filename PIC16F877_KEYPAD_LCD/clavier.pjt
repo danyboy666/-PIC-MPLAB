@@ -1,0 +1,27 @@
+[PROJECT]
+Target=\\TgeSrv1\Élèves_Dossiers\echaa013\Bureau\lab2\clavier.hex
+Development_Mode=
+Processor_Text=PIC16F877
+ToolSuite=CCS
+Processor=0x877F
+[\\TgeSrv1\Élèves_Dossiers\echaa013\Bureau\lab2\clavier]
+Type=4
+Path=
+FileList=
+BuildTool=
+OptionString=
+AdditionalOptionString=
+[mru-list]
+1=\\TgeSrv1\Élèves_Dossiers\echaa013\Bureau\lab2\clavier.c
+[Windows]
+0=0000 %S 0 0 796 451 3 0
+[Opened Files]
+1=clavier.c
+2=
+3=
+[Target Data]
+OptionString=-p +FM
+FileList=\\TgeSrv1\Élèves_Dossiers\echaa013\Bureau\lab2\clavier.c
+[Units]
+Count=1
+1=clavier.c (main)

@@ -1,0 +1,367 @@
+///////////////////////////////////////////////////////////////////////////////
+/*****************************************************************************/
+/*                                                                           */
+/* Laboratoire de la serrure avec afficheur LCD et mémorisation de codes     */
+/*                                                                           */
+/* Nous utilisons un microcontrolleur PIC16F877                              */
+/*                                                                           */ 
+/* Copyright Amélie Champagne et Dany Ferron                                 */
+/*****************************************************************************/
+/*                                                                           */ 
+/* Travail 2                                                                 */
+/* Amélie et Dany                                                            */
+/* le 3 mai 2011                                                             */
+/*                                                                           */
+/*****************************************************************************/
+///////////////////////////////////////////////////////////////////////////////
+#include <clavier.h>
+//Broches pour LCD.
+#define LCD_ENABLE_PIN  PIN_D0
+#define LCD_RS_PIN      PIN_D1
+#define LCD_RW_PIN      PIN_D2
+#define LCD_DATA4       PIN_D4
+#define LCD_DATA5       PIN_D5
+#define LCD_DATA6       PIN_D6
+#define LCD_DATA7       PIN_D7
+#define LCD_TYPE 2
+//Pilote LCD.
+#include <lcd.c>
+//Ficher avec définitions.
+#include <lcd_db666.h>
+//Macro pour lecture du clavier.
+#define INPUT_AB (((input_c()&0b00001111)*0x100)+input_b())
+//Définitions des touches.
+#define KP_0 0b0000111111111110
+#define KP_1 0b0000111111111101
+#define KP_2 0b0000111111111011
+#define KP_3 0b0000111111110111
+#define KP_4 0b0000111111101111
+#define KP_5 0b0000111111011111
+#define KP_6 0b0000111110111111
+#define KP_7 0b0000111101111111
+#define KP_8 0b0000111011111111
+#define KP_9 0b0000110111111111
+#define KP_S 0b0000101111111111
+#define KP_P 0b0000011111111111
+
+
+//Buzzer
+#define BUZZER PIN_A0
+//LED.
+
+#define LEDR PIN_A1
+#define LEDV PIN_A2
+
+#define STAR_KEY 10
+#define POUND_KEY 11
+#rom 0x2100={4,3,2,1}
+#rom 0x2120={9,8,7,6}
+
+
+
+//Mots de passe.
+//long user_password=read_EEPROM(0x00);
+//long code_admin=read_EEPROM(0x20);
+long code_public;
+long code_admin;
+//Variables de lectures.
+long code_validation=0,input_read=0,temp_passw;
+char try_msg=5;
+int8 x1,y1,x2,y2;
+
+BOOLEAN alarm=FALSE;
+//Addition des valeurs décalés et mettre en constante le code d'entré.
+#define CODE_ENTRE ((val4*1000)+(val3*100)+(val2*10)+(val1*1))
+//Déclarations des sous-fonctions.
+void unlock();
+long kp_read();
+void intrusion();
+void wrong_code();
+long read_combination(int8 x1,int8 y1,int8 x2,int8 y2);
+void code_gestion();
+void kp_init();
+
+long read_from_EEPROM(int adr)
+{
+int8 i;
+int8 val1,val2,val3,val4,val_temp;
+for(i=0;i<4;i++)
+{
+        
+val_temp=read_EEPROM(adr+i);
+val4=val3;
+val3=val2;
+val2=val1;
+val1=val_temp;
+}
+
+val_temp=CODE_ENTRE;
+return val_temp;
+}
+
+void write_to_EEPROM(int8 adr,int16 code)
+{
+int8 j;
+int16 tableau[4]={0,0,0,0};
+
+
+
+for(j=1;j<=4;j++)
+{
+
+
+tableau[j]=code/(10);
+code=code%10;
+
+}
+
+for(j=0;j<=3;j++)
+{
+
+write_EEPROM((adr+j),(tableau[j]));
+
+}
+}
+
+//Boucle principale.
+void main() 
+{
+   lcd_init();
+   
+   do
+   {
+      clr_display();
+      
+      code_validation=read_combination(3,1,8,2);//Mettre la valeur retourné dans une variable
+      //Si code validation est égale au mot de passe utilisateur ou administrateur
+     code_admin=read_from_EEPROM(0x20);
+      
+     code_public=read_from_EEPROM(0x00);
+      if(code_validation==code_admin)code_gestion();
+      if((code_validation==code_admin)&&(alarm==FALSE))code_gestion();
+      else
+      {
+         if(code_validation==code_public)
+         {
+            unlock();//Appel de la fonction débarrer.
+            try_msg=5;
+         }
+         else
+         {
+            
+            wrong_code();
+            
+            
+            if(try_msg==0)
+            {
+               intrusion();//Appel de la fonction intrusion.
+               //Le code utilisateur est maintenant égale au code administrateur.
+               temp_passw=code_public;
+               code_public=code_admin;
+               try_msg=255;
+            }
+         }
+      }
+      
+   }
+   while(TRUE);//Fin de la boucle infinie.
+}
+   //Fonction débarre.
+   void unlock()
+   {
+      char buzz_led_loop,door_opening,door_closing;//Variables locales.
+      
+      alarm=FALSE;
+      clr_display();
+      cursor_off();
+      lcd_gotoxy(5,1);
+      
+      lcd_putc("Door Unlocked");
+      
+      if(code_validation==code_admin)
+         {
+            code_public=temp_passw;
+         }
+         
+     // user_password=temp_passw;
+    //  code_validation=user_password;//Code validation est égale au code utilisateur.
+      //Boucle indication sonore pour indiquer que la porte est ouverte.
+      for(buzz_led_loop=0;buzz_led_loop<4;buzz_led_loop++)
+      {
+         delay_ms(50);
+         output_high(BUZZER);
+         output_low(LEDR);
+         delay_ms(100);
+         output_low(BUZZER);
+         output_high(LEDR);
+      }
+      output_low(LEDR);
+      //Boucle indicateur lumineux pour indiquer que la porte est ouverte.
+      for(door_opening=0;door_opening<10;door_opening++)
+      {
+         output_low(LEDV);
+         delay_ms(500);
+         output_high(LEDV);
+         delay_ms(500);
+      }
+      //Indicateur sonore pour indiquer que la porte est barrée.
+      for(door_closing=0;door_closing<2;door_closing++)
+      {
+         delay_ms(50);
+         output_high(BUZZER);
+         output_low(LEDV);
+         delay_ms(100);
+         output_low(BUZZER);
+         output_high(LEDV);
+      }
+      output_low(LEDV);//Remettre l'indicateur lumineux à off.
+   }
+   
+   //Fonction lecture de clavier.
+   long kp_read()
+   {
+      
+      long temp=15;//Variable de lecture de touche temporaire.
+      //Si une des touches est appuyée on la met en banque.
+      do
+      {
+         
+         input_read=INPUT_AB;//Mettre en variable la touche entrée.
+      }
+      while(input_read>=0xFFF);//Tant que que lecture clavier est plus grand que 4095.
+      
+      if(input_read==KP_0)temp=0;
+      if(input_read==KP_1)temp=1;
+      if(input_read==KP_2)temp=2;
+      if(input_read==KP_3)temp=3;
+      if(input_read==KP_4)temp=4;
+      if(input_read==KP_5)temp=5;
+      if(input_read==KP_6)temp=6;
+      if(input_read==KP_7)temp=7;
+      if(input_read==KP_8)temp=8;
+      if(input_read==KP_9)temp=9;
+      
+      if(input_read==KP_S)temp=STAR_KEY;
+      if(input_read==KP_P)temp=POUND_KEY;
+      
+      input_read=0;//Remettre la variable lecture à 0
+      
+      return temp;//Retour de la touche vers le programme appelant.
+   }
+   //Fonction de l'alarme.
+   void intrusion()
+   {
+      char pulsar1;//Variable pour le compteur.
+      
+      alarm=TRUE;
+      clr_display();
+      lcd_gotoxy(8,1);
+      lcd_putc("Alarm!");
+      delay_ms(500);
+      lcd_gotoxy(4,2);
+      lcd_putc("Admin required");
+      output_high(BUZZER);//Niveau haut au buzzeur
+      
+      for(pulsar1=1;pulsar1<=10;pulsar1++)//Compteur de zéro à dix.
+      {
+         output_high(LEDR);//LED Rouge allumée.
+         delay_ms(500);//Pause de une demi seconde.
+         output_low(LEDR);//LED Rouge éteinte.
+         delay_ms(500);//Pause de une demi seconde.
+      }
+      
+      output_low(BUZZER);//Niveau bas au buzzeur
+   }
+   //Fonction lire combine qui retourne une variable.
+   long read_combination(int8 x1,int8 y1,int8 x2,int8 y2)
+   {
+      
+      char count_input;
+      long val1=15,val2=15,val3=15,val4=15,touche;//Variables de lecture.
+      //Boucle à compteur permettant d'accumuler 4 touches entrées.
+      lcd_gotoxy(x1,y1);
+      lcd_putc("Enter Code :");
+      lcd_gotoxy(x2,y2);
+      cursor_blink_on();
+      for(count_input=1;count_input<=4;count_input++)
+      {
+
+         touche=kp_read();//Appel de la fonction lecture de clavier.
+
+         //Décalage de la variable temporaire 4 fois.
+         val4=val3;
+         val3=val2;
+         val2=val1;
+         val1=touche;
+         
+         lcd_putc("*");
+         output_high(BUZZER);//Activer le buzzeur.
+         delay_ms(250);//Pause de 250 ms.
+         output_low(BUZZER);//Sinon buzzeur est éteint.
+      }
+      return CODE_ENTRE;//Retour du code entre vers le programme appelant.
+   }
+   void wrong_code()
+   {
+      char pulsar2;
+      
+      for(pulsar2=0;pulsar2<3;pulsar2++)
+      {
+         delay_ms(50);
+         output_high(BUZZER);
+         output_low(LEDR);
+         delay_ms(100);
+         output_low(BUZZER);
+         output_high(LEDR);
+      }
+      
+      try_msg--;
+      clr_display();
+      cursor_off();
+      lcd_gotoxy(6,1);
+      lcd_putc("Wrong Code");
+      delay_ms(1000);
+      clr_display();
+      lcd_gotoxy(6,2);
+      printf(lcd_putc,"Try Left %u",try_msg);
+      delay_ms(5000);
+      output_low(LEDR);
+   }
+
+   void code_gestion()
+   {
+      char response;
+      long temp_code;
+      
+      clr_display();
+      cursor_off();
+      lcd_gotoxy(5,1);
+      lcd_putc("Code Gestion");
+      lcd_gotoxy(3,2);
+      lcd_putc("*=Admin #=Public");
+
+      response=kp_read();
+
+      delay_ms(3000);
+      
+      clr_display();
+      
+      if(response==STAR_KEY)
+      {
+         lcd_gotoxy(3,1);
+         lcd_putc("Code Superviseur");      
+         temp_code=read_combination(2,2,15,2);
+         write_to_EEPROM(0x20,code_admin);
+      }
+      
+      if(response==POUND_KEY)
+      {
+         lcd_gotoxy(5,1);
+         lcd_putc("Code Public");
+         temp_code=read_combination(2,2,15,2);
+         write_to_EEPROM(0x00,code_public);
+      }
+   }
+
+
+

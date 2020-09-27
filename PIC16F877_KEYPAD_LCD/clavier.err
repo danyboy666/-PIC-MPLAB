@@ -1,0 +1,18 @@
+*** Error 18 "C:\Users\db666\Desktop\lab2\clavier.h" Line 1(9,19): File can not be opened
+    Not in local "C:\Users\db666\Desktop\lab2\16F877.h"
+*** Error 128 "C:\Users\db666\Desktop\lab2\clavier.h" Line 2(9,14): A #DEVICE required before this line
+*** "C:\Users\db666\Desktop\lab2\clavier.h" Line 4: Error #111: Unknown keyword in #FUSES   "NOWDT"
+*** "C:\Users\db666\Desktop\lab2\clavier.h" Line 5: Error #111: Unknown keyword in #FUSES   "XT"
+*** "C:\Users\db666\Desktop\lab2\clavier.h" Line 6: Error #111: Unknown keyword in #FUSES   "NOPUT"
+*** "C:\Users\db666\Desktop\lab2\clavier.h" Line 7: Error #111: Unknown keyword in #FUSES   "NOPROTECT"
+*** "C:\Users\db666\Desktop\lab2\clavier.h" Line 8: Error #111: Unknown keyword in #FUSES   "BROWNOUT"
+*** "C:\Users\db666\Desktop\lab2\clavier.h" Line 9: Error #111: Unknown keyword in #FUSES   "NOLVP"
+*** "C:\Users\db666\Desktop\lab2\clavier.h" Line 10: Error #111: Unknown keyword in #FUSES   "NOCPD"
+*** "C:\Users\db666\Desktop\lab2\clavier.h" Line 11: Error #111: Unknown keyword in #FUSES   "NOWRT"
+*** "C:\Users\db666\Desktop\lab2\clavier.h" Line 12: Error #111: Unknown keyword in #FUSES   "NODEBUG"
+*** "C:\Users\db666\Desktop\lab2\clavier.h" Line 15: Error #100: USE parameter value is out of range   Not a number: PIN_C6
+*** "clavier.c" Line 28: Error #18: File can not be opened
+    Not in local "C:\Users\db666\Desktop\lab2\lcd.c"
+*** "C:\Users\db666\Desktop\lab2\lcd_db666.h" Line 71: Error #128: A #DEVICE required before this line
+*** "C:\Users\db666\Desktop\lab2\lcd_db666.h" Line 73: Error #12: Undefined identifier  -- lcd_send_byte
+      15 Errors,  0 Warnings.
